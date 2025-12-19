@@ -1,6 +1,11 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using GtMotive.Estimate.Microservice.Api.UseCases.Vehicles.Create;
+using GtMotive.Estimate.Microservice.Api.UseCases.Vehicles.GetAvailable;
+using GtMotive.Estimate.Microservice.Api.UseCases.Vehicles.Rent;
+using GtMotive.Estimate.Microservice.ApplicationCore.UseCases.Vehicles.Create;
+using GtMotive.Estimate.Microservice.ApplicationCore.UseCases.Vehicles.GetAvailable;
+using GtMotive.Estimate.Microservice.ApplicationCore.UseCases.Vehicles.Rent;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace GtMotive.Estimate.Microservice.Api.DependencyInjection
@@ -13,7 +18,13 @@ namespace GtMotive.Estimate.Microservice.Api.DependencyInjection
             ArgumentNullException.ThrowIfNull(services);
 
             services.AddScoped<CreateVehiclePresenter>();
-            services.AddScoped<ApplicationCore.UseCases.Vehicles.Create.ICreateVehicleOutputPort>(sp => sp.GetRequiredService<CreateVehiclePresenter>());
+            services.AddScoped<ICreateVehicleOutputPort>(sp => sp.GetRequiredService<CreateVehiclePresenter>());
+
+            services.AddScoped<GetAvailableVehiclesPresenter>();
+            services.AddScoped<IGetAvailableVehiclesOutputPort>(sp => sp.GetRequiredService<GetAvailableVehiclesPresenter>());
+
+            services.AddScoped<RentVehiclePresenter>();
+            services.AddScoped<IRentVehicleOutputPort>(sp => sp.GetRequiredService<RentVehiclePresenter>());
 
             return services;
         }
