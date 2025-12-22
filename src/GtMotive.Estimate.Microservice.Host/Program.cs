@@ -5,6 +5,7 @@ using Azure.Extensions.AspNetCore.Configuration.Secrets;
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using GtMotive.Estimate.Microservice.Api;
+using GtMotive.Estimate.Microservice.Api.Dto;
 using GtMotive.Estimate.Microservice.Host.Configuration;
 using GtMotive.Estimate.Microservice.Host.DependencyInjection;
 using GtMotive.Estimate.Microservice.Infrastructure;
@@ -141,18 +142,18 @@ app.UseSwaggerInApplication(pathBase, builder.Configuration);
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-app.MapGet("/", (IHostEnvironment env) => Results.Ok(new
+app.MapGet("/", (IHostEnvironment env) => new ServiceStatusDto
 {
-    service = "GtMotive.Estimate.Microservice",
-    environment = env.EnvironmentName,
-    status = "running",
-    endpoints = new
+    Service = "GtMotive.Estimate.Microservice",
+    Environment = env.EnvironmentName,
+    Status = "running",
+    Endpoints = new ServiceEndpointsDto
     {
-        health = "/health",
-        swagger = "/swagger"
+        Health = "/health",
+        Swagger = "/swagger"
     }
-}));
-app.MapGet("/favicon.ico", () => Results.NoContent());
+}).ExcludeFromDescription();
+app.MapGet("/favicon.ico", () => Results.NoContent()).ExcludeFromDescription();
 
 app.MapHealthChecks("/health");
 
