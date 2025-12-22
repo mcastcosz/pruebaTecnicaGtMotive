@@ -13,6 +13,7 @@ using GtMotive.Estimate.Microservice.Infrastructure.Repositories;
 using IdentityServer4.AccessTokenValidation;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -57,6 +58,7 @@ if (!builder.Environment.IsDevelopment())
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddHealthChecks();
 
 var appSettingsSection = builder.Configuration.GetSection("AppSettings");
 builder.Services.Configure<AppSettings>(appSettingsSection);
@@ -139,6 +141,21 @@ app.UseSwaggerInApplication(pathBase, builder.Configuration);
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+app.MapGet("/", (IHostEnvironment env) => Results.Ok(new
+{
+    service = "GtMotive.Estimate.Microservice",
+    environment = env.EnvironmentName,
+    status = "running",
+    endpoints = new
+    {
+        health = "/health",
+        swagger = "/swagger"
+    }
+}));
+app.MapGet("/favicon.ico", () => Results.NoContent());
+
+app.MapHealthChecks("/health");
+
 app.MapControllers();
 
 await app.RunAsync();
